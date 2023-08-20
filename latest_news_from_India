@@ -1,0 +1,39 @@
+#Program to fetch latest news in India using requests from NewsAPI
+
+import requests
+import datetime
+
+# Replace 'YOUR_API_KEY' with your actual API key from newsapi.org
+API_KEY = '3a7122e31ada408f95c0a2389974b0e1'
+BASE_URL = 'https://newsapi.org/v2/top-headlines'
+
+# List of topics you want to fetch news for
+topics = ['technology', 'science', 'business', 'health', 'entertainment']
+
+# Get today's date
+today = datetime.date.today()
+
+for topic in topics:
+    params = {
+        'apiKey': API_KEY,
+        'category': topic,
+        'country': 'in',  # You can change the country code as needed
+        'pageSize': 5,    # Number of articles to retrieve
+        'from': today,
+        'to': today
+    }
+
+    response = requests.get(BASE_URL, params=params)
+
+    if response.status_code == 200:
+        news_data = response.json()
+        articles = news_data.get('articles', [])
+
+        print(f"Top headlines in {topic.capitalize()}:")
+
+        for idx, article in enumerate(articles, start = 1):
+            title = article.get('title', 'No title')
+            source = article.get('source', {}).get('name', 'Unknown source')
+            print(f"{idx}. {title} - {source}")
+    else:
+        print(f"Error fetching news for {topic}: {response.status_code}")
